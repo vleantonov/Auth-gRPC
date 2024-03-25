@@ -2,32 +2,23 @@ package app
 
 import (
 	"log/slog"
-	"sso/internal/config"
-	"sso/internal/logger"
+	grpcapp "sso/internal/pkg/app/grpc"
+	"time"
 )
 
 type App struct {
-	cfg *config.Config
-	log *slog.Logger
+	GRPCServer *grpcapp.App
 }
 
-func New() *App {
-	cfg, err := config.Load()
-	if err != nil {
-		panic(err.Error())
-	}
+func New(
+	log *slog.Logger,
+	grpcPort int,
+	storagePath string,
+	tokenTTL time.Duration,
 
-	log, err := logger.New(cfg.Env)
-	if err != nil {
-		panic(err.Error())
-	}
-
+) *App {
+	gRPCServer := grpcapp.New(log, grpcPort)
 	return &App{
-		cfg: cfg,
-		log: log,
+		GRPCServer: gRPCServer,
 	}
-}
-
-func (a *App) Run() {
-	a.log.Info("starting application")
 }
