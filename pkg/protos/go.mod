@@ -1,3 +1,3 @@
-module auth_gRPC
+module protos
 
 go 1.21
