@@ -1,9 +1,12 @@
 package main
 
 import (
+	"os"
+	"os/signal"
 	"sso/internal/config"
 	"sso/internal/logger"
 	"sso/internal/pkg/app"
+	"syscall"
 )
 
 func main() {
@@ -24,5 +27,12 @@ func main() {
 		cfg.StoragePath,
 		cfg.TokenTTL,
 	)
-	a.GRPCServer.MustRun()
+	go a.GRPCServer.MustRun()
+
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGTERM, syscall.SIGINT)
+
+	<-stop
+
+	a.GRPCServer.Stop()
 }
